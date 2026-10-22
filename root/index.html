@@ -1,25 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>NodeJS</title>
-	 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-</head>
-
-<body class="container">
-<h1>Hands on Experience with Node JS</h1>
-<div class="card">
-	<div class="container">
-		<form action="#">
-	<input type="text">
-	<input type="text">
-	<input type="submit" class="btn">
-	</form>
-	</div>
-	 
-</div>
-
-
-<script src="./script.js"></script>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Node.js Workshop</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+  </head>
+  <body class="container">
+    <h1>Node.js Workshop</h1>
+    <div class="card">
+      <div class="card-content">
+        <form id="post-form">
+          <label for="title">Title</label>
+          <input id="title" type="text" maxlength="120" required />
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            class="materialize-textarea"
+            maxlength="2000"
+            required
+          ></textarea>
+          <button type="submit" class="btn">Add post</button>
+          <span id="status" role="status" aria-live="polite"></span>
+        </form>
+      </div>
+    </div>
+    <section aria-labelledby="posts-heading">
+      <h2 id="posts-heading">Posts</h2>
+      <div id="posts"></div>
+    </section>
+    <script src="./script.js"></script>
+  </body>
 </html>

@@ -1,50 +1,53 @@
-let divcard = document.createElement("div");
-let divcontainer = document.createElement("div");
-let form = document.createElement("form");
-let str="";
-form.setAttribute("action","#");
-divcard.setAttribute("class","card");
-divcontainer.setAttribute("class","container");
-str='<input  type="text">';
-str+=	'<input type="text">';
-str+=	'<input type="submit" class="btn">';
-form.innerHTML = str;
-divcard.append(divcontainer);
-divcontainer.append(form);
-document.body.append(divcard);
+"use strict";
 
-fetch("http://localhost:3000/post")
-.then((res)=>res.json())
-.then((data)=>{
-	console.log(data);
-makelist(data);
-});
-let divlist = document.createElement("div");
-function makelist(data) {
-	let str=""
-data.forEach((ele)=>{
-	str+="<p>" + ele["title"] + " =>" +ele["desc"];
-	str += "</p>";
-})
-divlist.innerHTML = str;
-document.body.append(divlist);
+const form = document.querySelector("#post-form");
+const titleInput = document.querySelector("#title");
+const descriptionInput = document.querySelector("#description");
+const list = document.querySelector("#posts");
+const status = document.querySelector("#status");
 
+function renderPost(post) {
+  const item = document.createElement("p");
+  const title = document.createElement("strong");
+  title.textContent = post.title;
+  item.append(title, document.createTextNode(` — ${post.desc}`));
+  list.append(item);
 }
-let myheaders = new Headers();
-myheaders.append("Content-Type","application/json");
-form.onsubmit = (evt)=>{
-	evt.preventDefault();
-fetch("http://localhost:3000/post",{
-	method:"post",
-	body:JSON.stringify({
-		"title":form.children[0].value,
-		"desc": form.children[1].value
-	}),
-	headers:myheaders
-})
-.then((res)=>res.json())
-.then((data)=>{
-console.log(data);
-makelist(data);
+
+async function loadPosts() {
+  const response = await fetch("/post");
+  if (!response.ok) {
+    throw new Error(`Unable to load posts (${response.status})`);
+  }
+  const posts = await response.json();
+  list.replaceChildren();
+  posts.forEach(renderPost);
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  status.textContent = "Saving…";
+  try {
+    const response = await fetch("/post", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: titleInput.value,
+        desc: descriptionInput.value,
+      }),
+    });
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error || `Unable to save (${response.status})`);
+    }
+    renderPost(payload);
+    form.reset();
+    status.textContent = "Saved.";
+  } catch (error) {
+    status.textContent = error.message;
+  }
 });
-}
+
+loadPosts().catch((error) => {
+  status.textContent = error.message;
+});
